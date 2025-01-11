@@ -1,0 +1,101 @@
+let boxes=document.querySelectorAll(".box");
+let restartbtn=document.querySelector(".reset-btn");
+let newGamebtn=document.querySelector(".new-btn");
+let msg=document.querySelector(".msg");
+let msgContainer=document.querySelector(".msg-container");
+
+let turn0=true;
+
+const winPatterns=[
+    [0,1,2],
+    [0,3,6],
+    [0,4,8],
+    [1,4,7],
+    [2,5,8],
+    [2,4,6],
+    [3,4,5],
+    [6,7,8],
+];
+
+let resetbtn=()=>{
+    turn0=true;
+    enableBtn();
+    msgContainer.classList.add("hide");
+}
+
+boxes.forEach((box)=>{
+    box.addEventListener("click",()=>{
+        if(turn0){
+            box.innerText="0";
+            turn0=false;
+        }
+        else{
+            box.innerText="X";
+            turn0=true;
+        }
+        box.disabled=true;
+
+        winChecker();
+    });
+});
+
+let disableBtn=()=>{
+    for(box of boxes){
+        box.disabled=true;
+    }
+}
+
+let enableBtn=()=>{
+    for(box of boxes){
+        box.disabled=false;
+        box.innerText="";
+    }
+}
+
+let showWinner=(element)=>{
+    msg.innerText=`Congratulation! winner ${element}`;
+    msgContainer.classList.remove("hide");
+    disableBtn();
+}
+
+let showTie=()=>{
+    msg.innerText="It's a tie";
+    msgContainer.classList.remove("hide");
+    disableBtn();
+}
+
+
+const winChecker=()=>{
+    let winnerFOund=false;
+    for(patterns of winPatterns){
+        let pos1val=boxes[patterns[0]].innerText;
+        let pos2val=boxes[patterns[1]].innerText;
+        let pos3val=boxes[patterns[2]].innerText;
+
+        if(pos1val != "" && pos2val != "" && pos3val != ""){
+            if(pos1val=== pos2val && pos2val === pos3val){
+                showWinner(pos1val);
+                winnerFOund=true;
+                return;
+            }
+       }
+    }
+
+    if(!winnerFOund){
+        let allFIlled=true;
+        for(box of boxes){
+            if(box.innerText===""){
+                allFIlled=false;
+                break;
+            }
+        }
+        if(allFIlled){
+            showTie();
+        }
+    }
+}
+
+
+restartbtn.addEventListener("click",resetbtn);
+newGamebtn.addEventListener("click",resetbtn);
+
